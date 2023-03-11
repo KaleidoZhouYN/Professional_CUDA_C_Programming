@@ -1,24 +1,6 @@
+#include "../common/common.h"
 #include <cuda_runtime.h>
 #include <stdio.h>
-#include <sys/time.h>
-
-#define CHECK(call) \
-{ \
-    const cudaError_t error = call; \
-    if (error != cudaSuccess) \ 
-    { \
-        printf("Error: %s:%d, ", __FILE__, __LINE__); \
-        printf("code:%d , reason: %s\n", error, cudaGetErrorString(error)); \
-        exit(1); \
-    } \
-} \
-
-double cpuSecond()
-{
-    struct timeval tp; 
-    gettimeofday(&tp,NULL);
-    return ((double)tp.tv_sec + (double)tp.tv_usec*1.e-6);
-}
 
 void initialData(float *ip,int size)
 {
@@ -101,18 +83,18 @@ int main(int argc, char **argv)
     gpuRef = (float *)malloc(nBytes);
 
     // initialize data at host side
-    double iStart = cpuSecond();
+    double iStart = seconds();
     initialData(h_A, nxy);
     initialData(h_B, nxy);
-    double iElaps = cpuSecond() - iStart; 
+    double iElaps = seconds() - iStart; 
 
     memset(hostRef, 0, nBytes);
     memset(gpuRef, 0, nBytes);
 
     // add matrix at host side for result checks
-    iStart = cpuSecond();
+    iStart = seconds();
     sumMatrixOnHost (h_A, h_B, hostRef, nx, ny);
-    iElaps = cpuSecond() - iStart; 
+    iElaps = seconds() - iStart; 
 
     // malloc device global memory
     float *d_MatA, *d_MatB, *d_MatC; 
@@ -130,10 +112,10 @@ int main(int argc, char **argv)
     dim3 block(dimx, dimy);
     dim3 grid((nx+block.x-1)/block.x, (ny+block.y-1)/block.y);
 
-    iStart = cpuSecond();
+    iStart = seconds();
     sumMatrixOnGPU2D <<< grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);
     cudaDeviceSynchronize();
-    iElaps = cpuSecond() - iStart; 
+    iElaps = seconds() - iStart; 
     printf("sumMatrixOnGPU2D<<<(%d,%d),(%d,%d)>>> elapsed %f sec\n", grid.x, grid.y, block.x, block.y, iElaps);
 
     // copy kernel result back to host side
