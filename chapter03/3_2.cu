@@ -52,3 +52,4 @@ __global__ void reduceUnrollWarps16(int *g_idata, int *g_odata, unsigned int n) 
     // write result for this block to global mem
     if (tid == 0) g_odata[blockIdx.x] = idata[0];
 }
+

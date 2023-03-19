@@ -46,7 +46,7 @@ A：两个主要原因分别是：
 
 3.6参考核函数reduceInterleaved和reduceCompleteUnrollWarps8,实现每个浮点数s的版本。比较它们的性能，选择合适的指标与/或事件来解释所有差距。它们相比于操作整数数据类型有什么不同的吗？
 
-A:因为一个CUDA核心中有不同数量的ALU和FPU，FPU能够处理int类型，但是ALU无法处理浮点类型
+A:因为一个CUDA核心中有不同数量的ALU和FPU，ALU处理整型类型，FPU处理浮点类型
 
 -------
 
